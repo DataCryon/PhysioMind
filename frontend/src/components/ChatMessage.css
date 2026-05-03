@@ -1,0 +1,140 @@
+/* ChatMessage — Message Bubble Styling */
+
+.chat-message {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.chat-message.user {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.chat-message.assistant {
+  background: transparent;
+}
+
+.chat-message.error .message-content {
+  color: var(--error);
+}
+
+/* Avatar */
+.message-avatar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.chat-message.user .message-avatar {
+  background: var(--border-primary);
+  color: var(--text-secondary);
+}
+
+.chat-message.assistant .message-avatar {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 4px 12px rgba(75, 144, 255, 0.2);
+}
+
+/* Body */
+.message-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-header {
+  margin-bottom: var(--space-xs);
+}
+
+.message-role {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.message-content {
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.message-content p {
+  margin-bottom: var(--space-sm);
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message-content strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.message-content ul, .message-content ol {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-lg);
+}
+
+.message-content li {
+  margin-bottom: var(--space-xs);
+}
+
+.message-content code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Sources */
+.message-sources {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-primary);
+}
+
+.sources-label {
+  display: block;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sources-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+@media (max-width: 768px) {
+  .chat-message {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+    border-radius: var(--radius-md);
+  }
+
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .message-content {
+    font-size: 15px; /* Better for mobile reading */
+  }
+}

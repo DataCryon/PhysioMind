@@ -1,0 +1,24 @@
+# Render deployment configuration
+services:
+  - type: web
+    name: physiomind-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: pdfs
+      - key: CHROMA_PERSIST_DIR
+        value: ./chroma_data
+      - key: EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
+      - key: LLM_MODEL
+        value: llama-3.3-70b-versatile
+      - key: FRONTEND_URL
+        sync: false

@@ -1,0 +1,27 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic>=2.0
+pydantic-settings
+python-dotenv
+
+# LangChain ecosystem
+langchain
+langchain-core
+langchain-community
+langchain-groq
+langchain-huggingface
+langchain-text-splitters
+langgraph
+
+# Vector DB & Embeddings
+sentence-transformers
+
+# Supabase
+supabase
+
+# PDF Processing
+pypdf
+
+# Utilities
+httpx
