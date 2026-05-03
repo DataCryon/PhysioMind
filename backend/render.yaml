@@ -14,8 +14,8 @@ services:
         sync: false
       - key: SUPABASE_BUCKET
         value: pdfs
-      - key: CHROMA_PERSIST_DIR
-        value: ./chroma_data
+      - key: SUPABASE_VECTOR_TABLE
+        value: doc_chunks
       - key: EMBEDDING_MODEL
         value: all-MiniLM-L6-v2
       - key: LLM_MODEL

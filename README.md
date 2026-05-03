@@ -17,7 +17,7 @@ A production-ready RAG (Retrieval-Augmented Generation) system for intelligent P
 | Frontend | React (Vite), React Router, Axios |
 | Backend | FastAPI, Python |
 | RAG Pipeline | LangChain + LangGraph |
-| Vector DB | ChromaDB (persistent) |
+| Vector DB | **Supabase Vector (pgvector)** |
 | Embeddings | Sentence Transformers (all-MiniLM-L6-v2) |
 | LLM | Groq API (Llama 3.3 70B) |
 | Storage | Supabase (Storage + Postgres) |
@@ -28,16 +28,20 @@ A production-ready RAG (Retrieval-Augmented Generation) system for intelligent P
 
 - Python 3.11+
 - Node.js 18+
-- Supabase account with Storage bucket and `pdf_documents` table
-- Groq API key
+- **Supabase account** (Free)
+- **Groq API key** (Free)
 
-### Supabase Setup
+### Supabase Setup (Free & Persistent)
 
-1. Create a new Supabase project
-2. Create a Storage bucket named `pdfs`
-3. Run this SQL in the SQL editor:
+1. Create a new Supabase project.
+2. Create a Storage bucket named `pdfs` and set it to **Public**.
+3. Run the following SQL in your Supabase SQL Editor:
 
 ```sql
+-- Enable the pgvector extension
+create extension if not exists vector;
+
+-- Table for document metadata
 CREATE TABLE pdf_documents (
     id UUID PRIMARY KEY,
     file_name TEXT NOT NULL,
@@ -48,92 +52,88 @@ CREATE TABLE pdf_documents (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Table for document chunks and their embeddings
+CREATE TABLE doc_chunks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    content TEXT,
+    metadata JSONB,
+    embedding VECTOR(384) -- all-MiniLM-L6-v2 uses 384 dimensions
+);
+
+-- Function for similarity search
+CREATE OR REPLACE FUNCTION match_chunks (
+  query_embedding VECTOR(384),
+  match_threshold FLOAT,
+  match_count INT,
+  filter_file_id TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+  id UUID,
+  content TEXT,
+  metadata JSONB,
+  similarity FLOAT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    doc_chunks.id,
+    doc_chunks.content,
+    doc_chunks.metadata,
+    1 - (doc_chunks.embedding <=> query_embedding) AS similarity
+  FROM doc_chunks
+  WHERE (filter_file_id IS NULL OR (doc_chunks.metadata->>'file_id') = filter_file_id)
+    AND 1 - (doc_chunks.embedding <=> query_embedding) > match_threshold
+  ORDER BY doc_chunks.embedding <=> query_embedding
+  LIMIT match_count;
+END;
+$$;
+
+-- RLS Policies
 ALTER TABLE pdf_documents ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow all" ON pdf_documents FOR ALL USING (true) WITH CHECK (true);
+ALTER TABLE doc_chunks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all" ON doc_chunks FOR ALL USING (true) WITH CHECK (true);
 ```
 
 ### Backend Setup
 
 ```bash
 cd backend
-
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-
-# Install dependencies
+source venv/bin/activate
 pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your API keys
-
-# Run the server
-uvicorn main:app --reload --port 8000
+cp .env.example .env # Add your Groq and Supabase keys here
+uvicorn main:app --reload
 ```
 
 ### Frontend Setup
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Configure environment
 cp .env.example .env
-
-# Run development server
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`
-
-## Project Structure
-
-```
-PhysioMind/
-├── backend/
-│   ├── main.py                 # FastAPI entry point
-│   ├── requirements.txt
-│   ├── .env.example
-│   └── app/
-│       ├── api/                # Route handlers
-│       ├── core/               # Config & logging
-│       ├── models/             # Data models
-│       ├── schemas/            # Pydantic schemas
-│       ├── services/           # Supabase & ChromaDB
-│       ├── rag/
-│       │   ├── ingestion/      # PDF processing
-│       │   ├── retrieval/      # Chunk retrieval
-│       │   └── generation/     # LLM + LangGraph
-│       └── utils/
-├── frontend/
-│   └── src/
-│       ├── components/         # Reusable UI components
-│       ├── pages/              # Dashboard & Chat
-│       ├── hooks/              # Custom React hooks
-│       ├── services/           # API layer
-│       └── utils/              # Formatters
-└── README.md
-```
-
-## Deployment
+## Deployment (100% Free Tier)
 
 ### Backend (Render)
-
-1. Push the `backend/` directory to a Git repo
-2. Create a new Web Service on Render
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Add environment variables from `.env.example`
+1. Push your code to GitHub.
+2. Create a new **Web Service** on Render.
+3. Select the `backend` folder as the root (or use the provided `render.yaml`).
+4. Set the following environment variables:
+   - `GROQ_API_KEY`: Your Groq key
+   - `SUPABASE_URL`: Your Supabase URL
+   - `SUPABASE_KEY`: Your Supabase `service_role` key
+   - `FRONTEND_URL`: Your Vercel app URL (after deployment)
 
 ### Frontend (Vercel)
-
-1. Push the `frontend/` directory to a Git repo
-2. Import project on Vercel
-3. Set `VITE_API_URL` to your Render backend URL
+1. Import your repo into Vercel.
+2. Set the `frontend` folder as the Root Directory.
+3. Add the environment variable:
+   - `VITE_API_URL`: Your Render service URL + `/api` (e.g., `https://physio-api.onrender.com/api`)
 
 ## License
 
