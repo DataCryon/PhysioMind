@@ -1,13 +1,16 @@
 # Render deployment configuration
 services:
   - type: web
-    name: physiomind-api
+    name: docmind-api
     plan: free
     env: python
+    rootDir: backend
     buildCommand: pip install --no-cache-dir -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GROQ_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
         sync: false
       - key: SUPABASE_URL
         sync: false
@@ -18,7 +21,9 @@ services:
       - key: SUPABASE_VECTOR_TABLE
         value: doc_chunks
       - key: EMBEDDING_MODEL
-        value: all-MiniLM-L6-v2
+        value: models/gemini-embedding-2
+      - key: EMBEDDING_DIMENSION
+        value: 384
       - key: LLM_MODEL
         value: llama-3.3-70b-versatile
       - key: FRONTEND_URL

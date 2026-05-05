@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
     LLM_MODEL: str = "llama-3.3-70b-versatile"
 
+    # Google Gemini (Embeddings)
+    GOOGLE_API_KEY: str
+
     # Supabase
     SUPABASE_URL: str
     SUPABASE_KEY: str
@@ -28,7 +31,8 @@ class Settings(BaseSettings):
     SUPABASE_VECTOR_TABLE: str = "doc_chunks"
 
     # Embedding
-    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    EMBEDDING_MODEL: str = "models/gemini-embedding-2"
+    EMBEDDING_DIMENSION: int = 384
 
     # RAG parameters
     CHUNK_SIZE: int = 1000

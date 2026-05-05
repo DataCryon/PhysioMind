@@ -10,20 +10,19 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
-langchain-huggingface
+langchain-google-genai
 langchain-text-splitters
 langgraph
 
 # Vector DB & Embeddings
---extra-index-url https://download.pytorch.org/whl/cpu
-torch>=2.0.0
-sentence-transformers
+# Using Google Gemini API for lightweight embeddings
 
 # Supabase
 supabase
 
 # PDF Processing
 pypdf
+pdfplumber
 
 # Utilities
 httpx

@@ -23,7 +23,7 @@ def setup_logging() -> logging.Logger:
     console_handler.setFormatter(formatter)
 
     # Root logger
-    logger = logging.getLogger("physiomind")
+    logger = logging.getLogger("docmind")
     logger.setLevel(getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO))
     logger.addHandler(console_handler)
 

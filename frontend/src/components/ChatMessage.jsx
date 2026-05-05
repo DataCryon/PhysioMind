@@ -23,7 +23,7 @@ export default function ChatMessage({ message }) {
 
       <div className="message-body">
         <div className="message-header">
-          <span className="message-role">{isUser ? 'You' : 'PhysioMind'}</span>
+          <span className="message-role">{isUser ? 'You' : 'DocMind'}</span>
         </div>
 
         <div className="message-content">

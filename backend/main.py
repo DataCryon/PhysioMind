@@ -1,5 +1,5 @@
 """
-PhysioMind Backend — FastAPI Application Entry Point.
+DocMind Backend — FastAPI Application Entry Point.
 
 RAG-based PDF Q&A system with:
 - PDF document management (upload, list, delete)
@@ -23,24 +23,24 @@ async def lifespan(app: FastAPI):
     Application lifespan handler.
     Pre-initializes heavy resources on startup for fast first requests.
     """
-    logger.info("🧠 PhysioMind API starting up...")
+    logger.info("🧠 DocMind API starting up...")
 
     # Pre-load embedding model and ChromaDB collection
     vector_store_service.initialize()
     stats = vector_store_service.get_stats()
     logger.info(f"Vector store ready: {stats['total_chunks']} chunks indexed")
 
-    logger.info("✅ PhysioMind API ready")
+    logger.info("✅ DocMind API ready")
     yield
 
-    logger.info("PhysioMind API shutting down...")
+    logger.info("DocMind API shutting down...")
 
 
 # Create FastAPI app
 settings = get_settings()
 
 app = FastAPI(
-    title="PhysioMind API",
+    title="DocMind API",
     description="RAG-based PDF Q&A system with intelligent document management",
     version="1.0.0",
     lifespan=lifespan,
@@ -53,7 +53,7 @@ app.add_middleware(
         settings.FRONTEND_URL,
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://physiomind.vercel.app", # Placeholder for your potential vercel URL
+        "https://docmind.vercel.app", # Placeholder for your potential vercel URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -76,7 +76,7 @@ app.include_router(sessions.router, prefix="/api")
 async def root():
     """Root endpoint."""
     return {
-        "service": "PhysioMind API",
+        "service": "DocMind API",
         "version": "1.0.0",
         "docs": "/docs",
     }

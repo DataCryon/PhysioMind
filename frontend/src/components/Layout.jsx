@@ -18,7 +18,7 @@ export default function Layout({ children }) {
             <HiOutlineSparkles />
           </div>
           <div className="brand-text">
-            <h1 className="brand-name">PhysioMind</h1>
+            <h1 className="brand-name">DocMind</h1>
             <span className="brand-tagline">AI Document Assistant</span>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function Layout({ children }) {
         <div className="brand-icon-sm">
           <HiOutlineSparkles />
         </div>
-        <h1 className="brand-name-sm">PhysioMind</h1>
+        <h1 className="brand-name-sm">DocMind</h1>
       </header>
 
       {/* Main content */}

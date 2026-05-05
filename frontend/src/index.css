@@ -1,5 +1,5 @@
 /* ============================================
-   PhysioMind — Design System
+   DocMind — Design System
    Premium dark theme with teal/cyan accents
    ============================================ */
 
@@ -227,6 +227,12 @@ a:hover {
   transition: all var(--transition-base);
   white-space: nowrap;
   user-select: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.btn:focus-visible {
+  outline-color: var(--accent-primary);
 }
 
 .btn:disabled {
@@ -245,13 +251,13 @@ a:hover {
 
 .btn-ghost {
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   border: 1px solid var(--border-primary);
 }
 
 .btn-ghost:hover:not(:disabled) {
   color: var(--text-primary);
-  border-color: var(--border-hover);
+  border-color: var(--accent-primary);
   background: var(--surface-hover);
 }
 
@@ -282,6 +288,7 @@ a:hover {
 .input:focus {
   border-color: var(--accent-primary);
   background: var(--bg-tertiary);
+  box-shadow: 0 0 0 2px rgba(75, 144, 255, 0.2);
 }
 
 .input::placeholder {

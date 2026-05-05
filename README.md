@@ -1,4 +1,4 @@
-# PhysioMind — AI Document Assistant
+# DocMind — AI Document Assistant
 
 A production-ready RAG (Retrieval-Augmented Generation) system for intelligent PDF document Q&A with source attribution.
 
@@ -18,7 +18,7 @@ A production-ready RAG (Retrieval-Augmented Generation) system for intelligent P
 | Backend | FastAPI, Python |
 | RAG Pipeline | LangChain + LangGraph |
 | Vector DB | **Supabase Vector (pgvector)** |
-| Embeddings | Sentence Transformers (all-MiniLM-L6-v2) |
+| Embeddings | Google Gemini API (`gemini-embedding-2`) |
 | LLM | Groq API (Llama 3.3 70B) |
 | Storage | Supabase (Storage + Postgres) |
 
@@ -30,6 +30,7 @@ A production-ready RAG (Retrieval-Augmented Generation) system for intelligent P
 - Node.js 18+
 - **Supabase account** (Free)
 - **Groq API key** (Free)
+- **Google AI Studio API key** (Free)
 
 ### Supabase Setup (Free & Persistent)
 
@@ -57,7 +58,7 @@ CREATE TABLE doc_chunks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content TEXT,
     metadata JSONB,
-    embedding VECTOR(384) -- all-MiniLM-L6-v2 uses 384 dimensions
+    embedding VECTOR(384) -- Using 384 dimensions for compatibility
 );
 
 -- Function for similarity search
@@ -104,7 +105,7 @@ cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env # Add your Groq and Supabase keys here
+cp .env.example .env # Add your Groq, Google, and Supabase keys here
 uvicorn main:app --reload
 ```
 
@@ -121,19 +122,14 @@ npm run dev
 
 ### Backend (Render)
 1. Push your code to GitHub.
-2. Create a new **Web Service** on Render.
-3. Select the `backend` folder as the root (or use the provided `render.yaml`).
-4. Set the following environment variables:
-   - `GROQ_API_KEY`: Your Groq key
-   - `SUPABASE_URL`: Your Supabase URL
-   - `SUPABASE_KEY`: Your Supabase `service_role` key
-   - `FRONTEND_URL`: Your Vercel app URL (after deployment)
+2. Create a new **Blueprint Instance** on Render using the root `render.yaml`.
+3. Set the required environment variables (`GROQ_API_KEY`, `GOOGLE_API_KEY`, etc.) in the Render dashboard.
 
 ### Frontend (Vercel)
 1. Import your repo into Vercel.
 2. Set the `frontend` folder as the Root Directory.
 3. Add the environment variable:
-   - `VITE_API_URL`: Your Render service URL + `/api` (e.g., `https://physio-api.onrender.com/api`)
+   - `VITE_API_URL`: Your Render service URL + `/api` (e.g., `https://docmind-api.onrender.com/api`)
 
 ## License
 

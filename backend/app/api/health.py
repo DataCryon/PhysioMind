@@ -12,6 +12,6 @@ async def health_check():
     """Basic health check endpoint for monitoring and deployment readiness."""
     return {
         "status": "healthy",
-        "service": "PhysioMind API",
+        "service": "DocMind API",
         "version": "1.0.0",
     }

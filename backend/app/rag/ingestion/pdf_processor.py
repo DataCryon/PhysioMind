@@ -4,15 +4,14 @@ Extracts text from PDFs page-wise and chunks it for embedding.
 """
 
 import io
-from pypdf import PdfReader
+import pdfplumber
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.core.config import get_settings
 from app.core.logging import logger
 
-
 def extract_pages(pdf_bytes: bytes) -> list[tuple[int, str]]:
     """
-    Extract text from each page of a PDF.
+    Extract text from each page of a PDF using pdfplumber for better layout preservation.
 
     Args:
         pdf_bytes: Raw PDF file content.
@@ -20,16 +19,17 @@ def extract_pages(pdf_bytes: bytes) -> list[tuple[int, str]]:
     Returns:
         List of (page_number, page_text) tuples. Page numbers are 1-indexed.
     """
-    reader = PdfReader(io.BytesIO(pdf_bytes))
     pages = []
+    
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for idx, page in enumerate(pdf.pages):
+            # extract_text preserves layout better than pypdf
+            text = page.extract_text() or ""
+            text = text.strip()
+            if text:
+                pages.append((idx + 1, text))
 
-    for idx, page in enumerate(reader.pages):
-        text = page.extract_text() or ""
-        text = text.strip()
-        if text:  # Skip empty pages
-            pages.append((idx + 1, text))
-
-    logger.info(f"Extracted {len(pages)} pages with text from PDF ({len(reader.pages)} total pages)")
+    logger.info(f"Extracted {len(pages)} pages with text from PDF ({len(pdf.pages)} total pages)")
     return pages
 
 

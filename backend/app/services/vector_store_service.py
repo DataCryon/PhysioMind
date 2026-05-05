@@ -5,7 +5,7 @@ Manages document chunk embeddings with persistent cloud storage.
 
 from __future__ import annotations
 from typing import Any
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores.supabase import SupabaseVectorStore
 from app.core.config import get_settings
 from app.core.logging import logger
@@ -13,19 +13,19 @@ from app.services.supabase_service import get_supabase_client
 
 # Module-level singletons
 _vector_store: SupabaseVectorStore | None = None
-_embeddings: HuggingFaceEmbeddings | None = None
+_embeddings: GoogleGenerativeAIEmbeddings | None = None
 
 
-def get_embeddings() -> HuggingFaceEmbeddings:
+def get_embeddings() -> GoogleGenerativeAIEmbeddings:
     """Get or create the embeddings model (singleton, cached)."""
     global _embeddings
     if _embeddings is None:
         settings = get_settings()
         logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
-        _embeddings = HuggingFaceEmbeddings(
-            model_name=settings.EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True, "batch_size": 32},
+        _embeddings = GoogleGenerativeAIEmbeddings(
+            model=settings.EMBEDDING_MODEL,
+            google_api_key=settings.GOOGLE_API_KEY,
+            output_dimensionality=settings.EMBEDDING_DIMENSION,
         )
         logger.info("Embedding model loaded successfully")
     return _embeddings
