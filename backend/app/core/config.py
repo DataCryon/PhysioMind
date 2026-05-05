@@ -18,15 +18,15 @@ class Settings(BaseSettings):
     )
 
     # Groq LLM
-    GROQ_API_KEY: str
+    GROQ_API_KEY: str | None = None
     LLM_MODEL: str = "llama-3.3-70b-versatile"
 
     # Google Gemini (Embeddings)
-    GOOGLE_API_KEY: str
+    GOOGLE_API_KEY: str | None = None
 
     # Supabase
-    SUPABASE_URL: str
-    SUPABASE_KEY: str
+    SUPABASE_URL: str | None = None
+    SUPABASE_KEY: str | None = None
     SUPABASE_BUCKET: str = "pdfs"
     SUPABASE_VECTOR_TABLE: str = "doc_chunks"
 
@@ -42,6 +42,15 @@ class Settings(BaseSettings):
     # Server
     FRONTEND_URL: str = "http://localhost:5173"
     LOG_LEVEL: str = "INFO"
+
+    def validate_critical_keys(self) -> list[str]:
+        """Check for missing critical API keys and return a list of missing ones."""
+        missing = []
+        if not self.GROQ_API_KEY: missing.append("GROQ_API_KEY")
+        if not self.GOOGLE_API_KEY: missing.append("GOOGLE_API_KEY")
+        if not self.SUPABASE_URL: missing.append("SUPABASE_URL")
+        if not self.SUPABASE_KEY: missing.append("SUPABASE_KEY")
+        return missing
 
 
 @lru_cache()

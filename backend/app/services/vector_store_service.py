@@ -21,6 +21,10 @@ def get_embeddings() -> GoogleGenerativeAIEmbeddings:
     global _embeddings
     if _embeddings is None:
         settings = get_settings()
+        if not settings.GOOGLE_API_KEY:
+            logger.error("❌ GOOGLE_API_KEY is missing. Embeddings cannot be generated.")
+            raise ValueError("GOOGLE_API_KEY is missing. Please set it in environment variables.")
+            
         logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
         _embeddings = GoogleGenerativeAIEmbeddings(
             model=settings.EMBEDDING_MODEL,
@@ -51,9 +55,18 @@ def _get_vector_store() -> SupabaseVectorStore:
 
 def initialize() -> None:
     """Pre-initialize embeddings and Vector Store on startup."""
-    get_embeddings()
-    _get_vector_store()
-    logger.info("Vector store service initialized")
+    try:
+        settings = get_settings()
+        missing = settings.validate_critical_keys()
+        if missing:
+            logger.warning(f"⚠️ Critical keys missing: {', '.join(missing)}. Some features will be disabled.")
+            return
+
+        get_embeddings()
+        _get_vector_store()
+        logger.info("Vector store service initialized")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize vector store service: {e}")
 
 
 async def add_chunks(chunks: list[dict]) -> int:

@@ -17,6 +17,10 @@ def get_supabase_client() -> Client:
     global _client
     if _client is None:
         settings = get_settings()
+        if not settings.SUPABASE_URL or not settings.SUPABASE_KEY:
+            logger.error("❌ SUPABASE_URL or SUPABASE_KEY is missing.")
+            raise ValueError("Supabase credentials missing. Please set them in environment variables.")
+            
         _client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
         logger.info("Supabase client initialized")
     return _client
