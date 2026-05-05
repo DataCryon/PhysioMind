@@ -51,20 +51,17 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         settings.FRONTEND_URL,
+        settings.FRONTEND_URL.rstrip("/"), # Handle trailing slash
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://docmind.vercel.app", # Placeholder for your potential vercel URL
+        "https://doc-mind-rag.vercel.app",
+        "https://docmind.vercel.app", 
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-from app.api import documents, query, health, sessions
-
-
-# Create FastAPI app
-...
 # Mount API routers
 app.include_router(health.router, prefix="/api")
 app.include_router(documents.router, prefix="/api")
